@@ -23,3 +23,6 @@ scipy
 seaborn
 shapely
 skyfield
+-e 
+black
+flake8
