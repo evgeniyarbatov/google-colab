@@ -32,7 +32,7 @@ jupyter:
 	@cd $(NOTEBOOK_DIR) && jupyter lab
 
 clear-kernel:
-	jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --inplace notebooks/**/*.ipynb
+	jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --inplace $(NOTEBOOK_DIR)/**/*.ipynb
 
 delete-kernels:
 	jupyter kernelspec list --json | jq -r '.kernelspecs | keys[]' | xargs -n1 jupyter kernelspec remove -f
@@ -40,8 +40,8 @@ delete-kernels:
 clear-output:
 	jupyter nbconvert \
 		--ClearOutputPreprocessor.enabled=True \
-		--inplace notebooks/*.ipynb
-		
+		--inplace $(NOTEBOOK_DIR)/*.ipynb
+
 test-notebooks:
 	fail=0
 	echo "Running notebooks..."
