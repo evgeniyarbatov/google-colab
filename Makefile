@@ -1,10 +1,32 @@
 SHELL := /bin/sh
 .ONESHELL:
 
+VENV_PATH := .venv
+
+PYTHON := $(VENV_PATH)/bin/python
+PIP := $(VENV_PATH)/bin/pip
+REQUIREMENTS := requirements.txt
+
 NOTEBOOK_DIR := notebooks
 NOTEBOOKS := $(shell find $(NOTEBOOK_DIR) -name "*.ipynb")
 
 default: jupyter
+
+venv:
+	@python3 -m venv $(VENV_PATH)
+
+requirements:
+	@jq -r '.cells[].source[]?' $(NOTEBOOK_DIR)/*.ipynb | \
+	python3 scripts/extract_imports.py > requirements.txt
+
+install: venv
+	@$(PIP) install --disable-pip-version-check -q --upgrade pip
+	@$(PIP) install --disable-pip-version-check -q -r $(REQUIREMENTS)
+
+	@$(PYTHON) -m ipykernel install \
+	--user \
+	--name google-colab \
+	--display-name "google-colab"
 
 jupyter:
 	@cd $(NOTEBOOK_DIR) && jupyter lab
@@ -26,6 +48,7 @@ test-notebooks:
 			--to notebook \
 			--execute \
 			--inplace \
+			--ExecutePreprocessor.kernel_name=google-colab \
 			--ExecutePreprocessor.timeout=600 \
 			"$$nb"; then \
 			echo "✅ OK: $$nb"; \
@@ -41,3 +64,6 @@ test-notebooks:
 		echo "⚠️  Some notebooks failed"; \
 	fi
 	exit $$fail
+
+cleanvenv:
+	@rm -rf $(VENV_PATH)
