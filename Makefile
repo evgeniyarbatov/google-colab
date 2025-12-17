@@ -7,13 +7,13 @@ NOTEBOOKS := $(shell find $(NOTEBOOK_DIR) -name "*.ipynb")
 default: jupyter
 
 jupyter:
-	@jupyter lab
+	@cd $(NOTEBOOK_DIR) && jupyter lab
 
 clear-kernel:
 	jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --inplace notebooks/**/*.ipynb
 
 delete-kernels:
-	jupyter kernelspec list --json | jq -r '.kernelspecs | keys[]' | grep -v python3 | xargs -n1 jupyter kernelspec remove -f
+	jupyter kernelspec list --json | jq -r '.kernelspecs | keys[]' | xargs -n1 jupyter kernelspec remove -f
 
 test-notebooks:
 	fail=0
