@@ -37,6 +37,11 @@ clear-kernel:
 delete-kernels:
 	jupyter kernelspec list --json | jq -r '.kernelspecs | keys[]' | xargs -n1 jupyter kernelspec remove -f
 
+clear-output:
+	jupyter nbconvert \
+		--ClearOutputPreprocessor.enabled=True \
+		--inplace notebooks/*.ipynb
+		
 test-notebooks:
 	fail=0
 	echo "Running notebooks..."
